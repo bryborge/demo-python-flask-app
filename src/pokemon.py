@@ -66,3 +66,17 @@ def create(pokemon):
             406,
             f"Pokemon with name {name} already exists"
         )
+
+
+def update(name, pokemon):
+    if name in POKEMON:
+        POKEMON[name]["name"] = pokemon.get("name", POKEMON[name]["name"])
+        POKEMON[name]["description"] = pokemon.get("description", POKEMON[name]["description"])
+        POKEMON[name]["types"] = pokemon.get("types", POKEMON[name]["types"])
+        POKEMON[name]["timestamp"] = get_timestamp()
+        return POKEMON[name]
+    else:
+        abort(
+            404,
+            f"Pokemon with name {name} not found"
+        )

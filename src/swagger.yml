@@ -60,7 +60,9 @@ paths:
       responses:
         "201":
           description: "Successfully created Pokemon"
+
   /pokemon/{name}:
+    # GET
     get:
       operationId: "src.pokemon.read_one"
       tags:
@@ -70,4 +72,21 @@ paths:
         - $ref: "#/components/parameters/name"
       responses:
         "200":
-          description: "Successfully read one Pokemon"
+          description: "Successfully read a Pokemon"
+    # PUT
+    put:
+      tags:
+        - Pokemon
+      operationId: "src.pokemon.update"
+      summary: "Update a Pokemon"
+      parameters:
+        - $ref: "#/components/parameters/name"
+      responses:
+        "200":
+          description: "Successfully updated a Pokemon"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "pokemon"
+              $ref: "#/components/schemas/Pokemon"
