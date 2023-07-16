@@ -26,11 +26,29 @@ components:
 
 paths:
   /pokemon:
+    # GET
     get:
       operationId: "src.pokemon.read_all"
       tags:
-        - "Pokemon"
-      summary: "Read the list of Pokemon."
+        - Pokemon
+      summary: "Read the list of Pokemon"
       responses:
         "200":
           description: "Successfully read Pokemon"
+    # POST
+    post:
+      operationId: "src.pokemon.create"
+      tags:
+        - Pokemon
+      summary: "Create a Pokemon"
+      requestBody:
+        description: "Pokemon to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "pokemon"
+              $ref: "#/components/schemas/Pokemon"
+      responses:
+        "201":
+          description: "Successfully created Pokemon"

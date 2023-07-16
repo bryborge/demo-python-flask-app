@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask import abort
 
 
 def get_timestamp():
@@ -6,25 +7,25 @@ def get_timestamp():
 
 
 POKEMON = {
-    "0001": {
+    "Bulbasaur": {
         "name": "bulbasaur",
         "description": "A small, quadrupedal amphibian Pokemon that has blue-green skin with darker patches.",
         "types": ["grass", "poison"],
         "timestamp": get_timestamp(),
     },
-    "0004": {
+    "Charmander": {
         "name": "charmander",
         "description": "A bipedal, reptilian Pokemon with a primarily orange body and blue eyes.",
         "types": ["fire"],
         "timestamp": get_timestamp(),
     },
-    "0007": {
+    "Squirtle": {
         "name": "squirtle",
         "description": "A small reptilian Pokemon that resembles a light-blue turtle.",
         "types": ["water"],
         "timestamp": get_timestamp(),
     },
-    "0025": {
+    "Pikachu": {
         "name": "pikachu",
         "description": "A short, chubby rodent Pokemon. It is covered in yellow fur with two horizontal brown stripes "
                        "on its back.",
@@ -36,3 +37,23 @@ POKEMON = {
 
 def read_all():
     return list(POKEMON.values())
+
+
+def create(pokemon):
+    name = pokemon.get("name")
+    description = pokemon.get("description")
+    types = pokemon.get("types")
+
+    if name not in POKEMON:
+        POKEMON[name] = {
+            "name": name,
+            "description": description,
+            "types": types,
+            "timestamp": get_timestamp()
+        }
+        return POKEMON[name], 201
+    else:
+        abort(
+            406,
+            f"Pokemon with name {name} already exists"
+        )
