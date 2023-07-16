@@ -39,6 +39,15 @@ def read_all():
     return list(POKEMON.values())
 
 
+def read_one(name):
+    if name in POKEMON:
+        return POKEMON[name]
+    else:
+        abort(
+            404, f"Pokemon with name {name} not found"
+        )
+
+
 def create(pokemon):
     name = pokemon.get("name")
     description = pokemon.get("description")

@@ -23,6 +23,14 @@ components:
           type: "array"
           items:
             type: "string"
+  parameters:
+    name:
+      name: "name"
+      description: "The name of the Pokemon to get"
+      in: path
+      required: True
+      schema:
+        type: "string"
 
 paths:
   /pokemon:
@@ -52,3 +60,14 @@ paths:
       responses:
         "201":
           description: "Successfully created Pokemon"
+  /pokemon/{name}:
+    get:
+      operationId: "src.pokemon.read_one"
+      tags:
+        - Pokemon
+      summary: "Read one Pokemon"
+      parameters:
+        - $ref: "#/components/parameters/name"
+      responses:
+        "200":
+          description: "Successfully read one Pokemon"
