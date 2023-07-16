@@ -90,3 +90,14 @@ paths:
             schema:
               x-body-name: "pokemon"
               $ref: "#/components/schemas/Pokemon"
+    # DELETE
+    delete:
+      tags:
+        - Pokemon
+      operationId: "src.pokemon.delete"
+      summary: "Delete a Pokemon"
+      parameters:
+        - $ref: "#/components/parameters/name"
+      responses:
+        "204":
+          description: "Successfully deleted a Pokemon"

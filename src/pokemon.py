@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import abort
+from flask import make_response
 
 
 def get_timestamp():
@@ -75,6 +76,19 @@ def update(name, pokemon):
         POKEMON[name]["types"] = pokemon.get("types", POKEMON[name]["types"])
         POKEMON[name]["timestamp"] = get_timestamp()
         return POKEMON[name]
+    else:
+        abort(
+            404,
+            f"Pokemon with name {name} not found"
+        )
+
+
+def delete(name):
+    if name in POKEMON:
+        del POKEMON[name]
+        return make_response(
+            f"{name} successfully deleted", 200
+        )
     else:
         abort(
             404,
