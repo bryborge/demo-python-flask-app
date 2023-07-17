@@ -6,5 +6,10 @@
 </head>
 <body>
     <h1>Hello, Trainer!</h1>
+    <ul>
+        {% for p in pokemon %}
+        <li>{{ p.name }}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

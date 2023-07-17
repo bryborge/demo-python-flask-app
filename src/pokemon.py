@@ -1,96 +1,65 @@
-from datetime import datetime
-from flask import abort
-from flask import make_response
-
-
-def get_timestamp():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-
-POKEMON = {
-    "Bulbasaur": {
-        "name": "bulbasaur",
-        "description": "A small, quadrupedal amphibian Pokemon that has blue-green skin with darker patches.",
-        "types": ["grass", "poison"],
-        "timestamp": get_timestamp(),
-    },
-    "Charmander": {
-        "name": "charmander",
-        "description": "A bipedal, reptilian Pokemon with a primarily orange body and blue eyes.",
-        "types": ["fire"],
-        "timestamp": get_timestamp(),
-    },
-    "Squirtle": {
-        "name": "squirtle",
-        "description": "A small reptilian Pokemon that resembles a light-blue turtle.",
-        "types": ["water"],
-        "timestamp": get_timestamp(),
-    },
-    "Pikachu": {
-        "name": "pikachu",
-        "description": "A short, chubby rodent Pokemon. It is covered in yellow fur with two horizontal brown stripes "
-                       "on its back.",
-        "types": ["electric"],
-        "timestamp": get_timestamp(),
-    }
-}
+from flask import abort, make_response
+# Custom
+from config import db
+from models import Pokemon, pokemons_schema, pokemon_schema
 
 
 def read_all():
-    return list(POKEMON.values())
-
-
-def read_one(name):
-    if name in POKEMON:
-        return POKEMON[name]
-    else:
-        abort(
-            404, f"Pokemon with name {name} not found"
-        )
+    pokemon = Pokemon.query.all()
+    return pokemons_schema.dump(pokemon)
 
 
 def create(pokemon):
     name = pokemon.get("name")
-    description = pokemon.get("description")
-    types = pokemon.get("types")
+    existing_pokemon = Pokemon.query.filter(Pokemon.name == name).one_or_none()
 
-    if name not in POKEMON:
-        POKEMON[name] = {
-            "name": name,
-            "description": description,
-            "types": types,
-            "timestamp": get_timestamp()
-        }
-        return POKEMON[name], 201
+    if existing_pokemon is None:
+        new_pokemon = pokemon_schema.load(pokemon, session=db.session)
+        db.session.add(new_pokemon)
+        db.session.commit()
+        return pokemon_schema.dump(new_pokemon), 201
     else:
-        abort(
-            406,
-            f"Pokemon with name {name} already exists"
-        )
+        abort(406, f"Pokemon with name {name} already exists")
+
+
+def read_one(name):
+    pokemon = Pokemon.query.filter(Pokemon.name == name).one_or_none()
+
+    if pokemon is not None:
+        return pokemon_schema.dump(pokemon)
+    else:
+        error_not_found(name)
 
 
 def update(name, pokemon):
-    if name in POKEMON:
-        POKEMON[name]["name"] = pokemon.get("name", POKEMON[name]["name"])
-        POKEMON[name]["description"] = pokemon.get("description", POKEMON[name]["description"])
-        POKEMON[name]["types"] = pokemon.get("types", POKEMON[name]["types"])
-        POKEMON[name]["timestamp"] = get_timestamp()
-        return POKEMON[name]
+    existing_pokemon = Pokemon.query.filter(Pokemon.name == name).one_or_none()
+
+    if existing_pokemon:
+        update_pokemon = pokemon_schema.load(pokemon, session=db.session)
+        existing_pokemon.name = update_pokemon.name
+        existing_pokemon.description = update_pokemon.description
+        existing_pokemon.type = update_pokemon.type
+        db.session.merge(existing_pokemon)
+        db.session.commit()
+        return pokemon_schema.dump(existing_pokemon), 201
     else:
-        abort(
-            404,
-            f"Pokemon with name {name} not found"
-        )
+        error_not_found(name)
 
 
 def delete(name):
-    if name in POKEMON:
-        del POKEMON[name]
-        return make_response(
-            f"{name} successfully deleted", 200
-        )
+    existing_pokemon = Pokemon.query.filter(Pokemon.name == name).one_or_none()
+
+    if existing_pokemon:
+        db.session.delete(existing_pokemon)
+        db.session.commit()
+        return make_response(f"{name} successfully deleted", 200)
     else:
-        abort(
-            404,
-            f"Pokemon with name {name} not found"
-        )
+        error_not_found(name)
+
+
+##
+# Helper Functions
+#
+
+def error_not_found(name):
+    abort(404, f"Pokemon with name {name} not found")
