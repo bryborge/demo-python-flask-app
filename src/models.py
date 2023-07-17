@@ -20,4 +20,5 @@ class PokemonSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
 
 
-pokemon_schema = PokemonSchema(many=True)
+pokemon_schema = PokemonSchema()
+pokemons_schema = PokemonSchema(many=True)
