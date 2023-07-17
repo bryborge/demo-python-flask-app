@@ -1,6 +1,6 @@
 from flask import render_template
-import config
 from models import Pokemon
+import config
 
 
 app = config.connex_app

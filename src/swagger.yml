@@ -33,7 +33,7 @@ components:
 
 paths:
   /pokemon:
-    # GET
+    # READ ALL
     get:
       operationId: "src.pokemon.read_all"
       tags:
@@ -42,7 +42,7 @@ paths:
       responses:
         "200":
           description: "Successfully read Pokemon"
-    # POST
+    # CREATE
     post:
       operationId: "src.pokemon.create"
       tags:
@@ -61,7 +61,7 @@ paths:
           description: "Successfully created Pokemon"
 
   /pokemon/{name}:
-    # GET
+    # READ ONE
     get:
       operationId: "src.pokemon.read_one"
       tags:
@@ -72,7 +72,7 @@ paths:
       responses:
         "200":
           description: "Successfully read a Pokemon"
-    # PUT
+    # UPDATE
     put:
       tags:
         - Pokemon
